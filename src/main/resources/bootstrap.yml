@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: lick-web
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+      label: master
+      profile: dev
+      username: user # 增加配置中心安全机制校验账号和密码
+      password: user123456
+      fail-fast: true
+      retry:
+        max-attempts: 3
+server:
+  port: 9002
+eureka:
+  client:
+    service-url:
+      defaultZone: http://lick:lick123456@localhost:8761/eureka
+
+
+# 刷新配置中心的配置，因为springboot1.5.x以上默认开通了安全认证，需要关闭
+management:
+  security:
+    enabled: false
