@@ -1,6 +1,10 @@
 package com.lick.controller;
 
+import com.lick.proxy.CglibProxy;
+import com.lick.proxy.ProxyFactory;
 import com.lick.service.UserInfoService;
+import com.lick.service.UserService;
+import com.lick.service.impl.UserServiceImpl;
 import com.lick.vo.UserInfoReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.lang.reflect.Proxy;
 
 /**
  * @description：
@@ -26,5 +32,19 @@ public class UserInfoController {
     public String getUserInfo(@RequestBody UserInfoReq userInfoReq){
         logger.info("get user info consumer :{}",userInfoReq.getUserCode());
         return userInfoService.getUserInfo(userInfoReq);
+    }
+
+    /**
+     * 测试动态代理
+     * @param args
+     */
+    public static void main(String[] args) {
+        UserService user = new UserServiceImpl();
+        ProxyFactory pf = new ProxyFactory(user);
+        UserService userapi = (UserService) Proxy.newProxyInstance(user.getClass().getClassLoader(),user.getClass().getInterfaces(),pf);
+        userapi.removeUsr(11);
+        CglibProxy proxy = new CglibProxy();
+        UserServiceImpl userService =(UserServiceImpl)proxy.getProxy(UserServiceImpl.class);
+        userService.removeUsr(12);
     }
 }
